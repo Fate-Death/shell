@@ -4,11 +4,28 @@
 #include <sys/types.h>
 #include <string.h>
 #include <stdlib.h>
+#include <string.h>
+
 #define LSH_RL_BUFSIZE 1024
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
 #define PATH_MAX 1024
 
+//searching on google
+int lsh_search(char **args){
+	char google[256]="https://www.google.com/search?q=";
+	char command[300];
+	strcat(google, args[1]);
+	int i=2;
+	while(args[i]!=NULL){
+		strcat(google, "+");
+		strcat(google, args[i]);
+		i++;
+	}
+	snprintf(command,sizeof(command),"xdg-open \"%s\"",google);
+	system(command);
+	return 1;
+}
 
 //Functions declarations for builtin shell commands
 int lsh_cd(char **args);
@@ -20,12 +37,14 @@ int lsh_exit(char **args);
 char *builtin_str[]={
 	"cd",
 	"help",
-	"exit"
+	"exit",
+	"google"
 };
 int (*builtin_func[])(char **)={
 	&lsh_cd,
 	&lsh_help,
 	&lsh_exit,
+	&lsh_search,
 };
 int lsh_num_builtins(){
 	return sizeof(builtin_str)/sizeof(char *);
